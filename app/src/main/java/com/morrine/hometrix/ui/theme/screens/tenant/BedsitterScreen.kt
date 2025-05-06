@@ -1,219 +1,365 @@
 package com.morrine.hometrix.ui.theme.screens.tenant
 
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfDocument
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.morrine.hometrix.R
-import com.morrine.hometrix.navigation.ROUT_HOME
-import com.morrine.hometrix.ui.theme.newOrange
-import com.morrine.hometrix.ui.theme.newWhite
+import com.morrine.hometrix.viewmodel.ProductViewModel
+import com.morrine.hometrix.model.Product
+import com.morrine.hometrix.navigation.ROUT_ADD_PRODUCT
+import com.morrine.hometrix.navigation.ROUT_BEDSITTER
+import com.morrine.hometrix.navigation.ROUT_EDIT_PRODUCT
+import com.morrine.hometrix.navigation.ROUT_PRODUCT_LIST
+import com.morrine.hometrix.navigation.editBedsitterRoute
+import com.morrine.hometrix.viewmodel.BedsitterViewModel
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BedsitterScreen(navController: NavController){
-    //Scaffold
+fun BedsitterScreen(navController: NavController, viewModel: BedsitterViewModel) {
+    val bedsitter by viewModel.allBedsitter.observeAsState(emptyList())
+    var showMenu by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
 
-    var selectedIndex by remember { mutableStateOf(0) }
+    val filteredBedsitter = bedsitter.filter {
+        it.name.contains(searchQuery, ignoreCase = true)
+    }
 
     Scaffold(
-        //TopBar
         topBar = {
-            TopAppBar(
-                title = { Text("contact") },
-                navigationIcon = {
-                    IconButton(onClick = { /* Handle back/nav */ }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = newOrange,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
-            )
-        },
-
-        //BottomBar
-        bottomBar = {
-            NavigationBar (
-                containerColor = newOrange
-            ){
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") },
-                    selected = selectedIndex == 0,
-                    onClick = { selectedIndex = 0
-                        navController.navigate(ROUT_HOME)
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorites") },
-                    label = { Text("Favorites") },
-                    selected = selectedIndex == 1,
-                    onClick = { selectedIndex = 1
-                        // navController.navigate(ROUT_HOME)
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                    label = { Text("Profile") },
-                    selected = selectedIndex == 2,
-                    onClick = { selectedIndex = 2
-                        //  navController.navigate(ROUT_HOME)
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Info, contentDescription = "Profile") },
-                    label = { Text("Info") },
-                    selected = selectedIndex == 2,
-                    onClick = { selectedIndex = 2
-                        //  navController.navigate(ROUT_HOME)
+            Column {
+                TopAppBar(
+                    title = { Text("Bedsitter", fontSize = 20.sp) },
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(Color.LightGray),
+                    actions = {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Bedsitter") },
+                                onClick = {
+                                    navController.navigate(ROUT_BEDSITTER)
+                                    showMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Add Product") },
+                                onClick = {
+                                    navController.navigate(ROUT_ADD_BEDSITTER)
+                                    showMenu = false
+                                }
+                            )
+                        }
                     }
                 )
 
-            }
-        },
 
-        //FloatingActionButton
-        floatingActionButton = {
-            FloatingActionButton (
-                onClick = { /* Add action */ },
-                containerColor = Color.LightGray
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
-            }
-        },
-        //contents
-        content = { paddingValues ->
-            Column (
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                var mContext = LocalContext.current
-
-
-                //Main Contents of the page
-                Column(
+                //Search Bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White)
-                        .padding(horizontal = 16.dp, vertical = 24.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                ) {
-                    Text(
-                        text = "Personal Tasks",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        modifier = Modifier.padding(bottom = 20.dp)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    placeholder = { Text("Search products...") },
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = Color.Gray
+                        )
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Black,  // Border color when focused
+                        unfocusedBorderColor = Color.Gray, // Border color when not focused
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.DarkGray
                     )
-
-                    // First Task Card
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        colors = CardDefaults.cardColors(containerColor = newWhite),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Row(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(R.drawable.img_12),
-                                contentDescription = "task",
-                                modifier = Modifier.size(80.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(text = "NDA Review for website project", fontSize = 18.sp)
-                                Text(text = "Today - 10 pm", fontSize = 14.sp, color = Color.Gray)
-                            }
-                        }
-                    }
-
-                    // Second Task Card
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = newWhite),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Row(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(R.drawable.img_12),
-                                contentDescription = "task",
-                                modifier = Modifier.size(80.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(text = "Email reply for Green project", fontSize = 18.sp)
-                                Text(text = "Today - 10 pm", fontSize = 14.sp, color = Color.Gray)
-                            }
-                        }
-                    }
-                }
-
-
+                )
             }
-
-
+        },
+        bottomBar = {
+            com.morrine.hometrix.ui.theme.screens.products.BottomNavigationBar1(
+                navController
+            )
         }
-    )
-
-    //End of scaffold
-
-
-
-
-
-
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+            LazyColumn {
+                items(filteredProducts.size) { index ->
+                    ProductItem(navController, filteredProducts[index], viewModel)
+                }
+            }
+        }
+    }
 }
 
-@Preview(showBackground = true)
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun BedsitterScreenPreview(){
-    com.morrine.hometrix.ui.theme.screens.tenant.BedsitterScreen(rememberNavController())
+fun ProductItem(navController: NavController, product: Product, viewModel: ProductViewModel) {
+    val painter: Painter = rememberAsyncImagePainter(
+        model = product.imagePath?.let { Uri.parse(it) } ?: Uri.EMPTY
+    )
+    val context = LocalContext.current
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable {
+                if (product.id != 0) {
+                    navController.navigate(ROUT_EDIT_PRODUCT)
+                }
+            },
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            // Product Image
+            Image(
+                painter = painter,
+                contentDescription = "Product Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            // Gradient Overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .align(Alignment.BottomStart)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
+                        )
+                    )
+            )
+
+            // Product Info
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 12.dp, bottom = 60.dp)
+            ) {
+                Text(
+                    text = product.name,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = "Price: Ksh${product.price}",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
+
+            // Buttons (Message, Edit, Delete, Download PDF)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .align(Alignment.BottomEnd)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Message Seller
+                    OutlinedButton(
+                        onClick = {
+                            val smsIntent = Intent(Intent.ACTION_SENDTO)
+                            smsIntent.data = "smsto:${product.phone}".toUri()
+                            smsIntent.putExtra("sms_body", "Hello Seller,...?")
+                            context.startActivity(smsIntent)
+                        },
+                        shape = RoundedCornerShape(8.dp),
+                    ) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "Message Seller"
+                            )
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(text = "Message Seller")
+                        }
+                    }
+
+                    // Edit Product
+                    IconButton(
+                        onClick = {
+                            navController.navigate(editProductRoute(product.id))
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            tint = Color.White
+                        )
+                    }
+
+                    // Delete Product
+                    IconButton(
+                        onClick = { viewModel.deleteProduct(product) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = Color.White
+                        )
+                    }
+
+                    // Download PDF
+                    IconButton(
+                        onClick = { generateProductPDF(context, product) }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.download),
+                            contentDescription = "",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+fun generateProductPDF(context: Context, product: Product) {
+    val pdfDocument = PdfDocument()
+    val pageInfo = PdfDocument.PageInfo.Builder(300, 500, 1).create()
+    val page = pdfDocument.startPage(pageInfo)
+    val canvas = page.canvas
+    val paint = android.graphics.Paint()
+
+    val bitmap: Bitmap? = try {
+        product.imagePath?.let {
+            val uri = Uri.parse(it)
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+
+    bitmap?.let {
+        val scaledBitmap = Bitmap.createScaledBitmap(it, 250, 150, false)
+        canvas.drawBitmap(scaledBitmap, 25f, 20f, paint)
+    }
+
+    paint.textSize = 16f
+    paint.isFakeBoldText = true
+    canvas.drawText("Product Details", 80f, 200f, paint)
+
+    paint.textSize = 12f
+    paint.isFakeBoldText = false
+    canvas.drawText("Name: ${product.name}", 50f, 230f, paint)
+    canvas.drawText("Price: Ksh${product.price}", 50f, 250f, paint)
+    canvas.drawText("Seller Phone: ${product.phone}", 50f, 270f, paint)
+
+    pdfDocument.finishPage(page)
+
+    // Save PDF using MediaStore (Scoped Storage)
+    val fileName = "${product.name}_Details.pdf"
+    val contentValues = ContentValues().apply {
+        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+        put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+    }
+
+    val contentResolver = context.contentResolver
+    val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+
+    if (uri != null) {
+        try {
+            val outputStream: OutputStream? = contentResolver.openOutputStream(uri)
+            if (outputStream != null) {
+                pdfDocument.writeTo(outputStream)
+                Toast.makeText(context, "PDF saved to Downloads!", Toast.LENGTH_LONG).show()
+            }
+            outputStream?.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(context, "Failed to save PDF!", Toast.LENGTH_LONG).show()
+        }
+    } else {
+        Toast.makeText(context, "Failed to create file!", Toast.LENGTH_LONG).show()
+    }
+
+    pdfDocument.close()
+}
+
+// Bottom Navigation Bar Component
+@Composable
+fun BottomNavigationBar1(navController: NavController) {
+    NavigationBar(
+        containerColor = Color(0xFFA2B9A2),
+        contentColor = Color.White
+    ) {
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate(ROUT_PRODUCT_LIST) },
+            icon = { Icon(Icons.Default.Home, contentDescription = "Product List") },
+            label = { Text("Home") }
+        )
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate(ROUT_ADD_PRODUCT) },
+            icon = { Icon(Icons.Default.AddCircle, contentDescription = "Add Product") },
+            label = { Text("Add") }
+        )
+    }
 }

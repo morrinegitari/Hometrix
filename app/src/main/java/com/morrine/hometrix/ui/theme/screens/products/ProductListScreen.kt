@@ -41,6 +41,7 @@ import com.morrine.hometrix.R
 import com.morrine.hometrix.viewmodel.ProductViewModel
 import com.morrine.hometrix.model.Product
 import com.morrine.hometrix.navigation.ROUT_ADD_PRODUCT
+import com.morrine.hometrix.navigation.ROUT_BEDSITTER
 import com.morrine.hometrix.navigation.ROUT_EDIT_PRODUCT
 import com.morrine.hometrix.navigation.ROUT_PRODUCT_LIST
 import com.morrine.hometrix.navigation.editProductRoute

@@ -18,8 +18,11 @@ import com.morrine.hometrix.repository.UserRepository
 import com.morrine.hometrix.ui.theme.screens.about.AboutScreen
 import com.morrine.hometrix.ui.theme.screens.auth.LoginScreen
 import com.morrine.hometrix.ui.theme.screens.auth.RegisterScreen
+import com.morrine.hometrix.ui.theme.screens.dashboard.BookingScreen
 import com.morrine.hometrix.ui.theme.screens.dashboard.DashBoard2Screen
 import com.morrine.hometrix.ui.theme.screens.dashboard.DashBoardScreen
+import com.morrine.hometrix.ui.theme.screens.dashboard.LandlorduploadCScreen
+import com.morrine.hometrix.ui.theme.screens.dashboard.LandlorduploadScreenPreview
 import com.morrine.hometrix.ui.theme.screens.home.HomeScreen
 import com.morrine.hometrix.ui.theme.screens.products.AddProductScreen
 import com.morrine.hometrix.ui.theme.screens.products.ProductListScreen
@@ -54,6 +57,12 @@ fun AppNavHost(
     ) {
         composable (ROUT_HOME) {
             HomeScreen(navController)
+        }
+        composable (ROUT_BOOKING) {
+            BookingScreen(navController)
+        }
+        composable (ROUT_LANDLORDUPLOAD) {
+            LandlorduploadCScreen(navController)
         }
         composable (ROUT_ABOUT) {
             AboutScreen(navController)
@@ -137,7 +146,19 @@ fun AppNavHost(
                 EditProductScreen(productId, navController, productViewModel)
             }
         }
-
+//Bedsitter
+        composable(ROUT_ADD_BEDSITTER) {
+            AddBedsitterScreen(navController, productViewModel)
+        }
+        composable(
+            route = ROUT_EDIT_BEDSITTER,
+            arguments = listOf(navArgument("bedsitterId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val bedsitterId = backStackEntry.arguments?.getInt("bedsitterId")
+            if (bedsitterId != null) {
+                EditBedsitterScreen(bedsitterId, navController, bedsitterViewModel)
+            }
+        }
 
 
 

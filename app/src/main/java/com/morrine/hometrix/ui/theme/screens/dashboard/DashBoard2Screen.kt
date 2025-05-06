@@ -5,6 +5,7 @@ import android.provider.MediaStore
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,17 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -67,6 +62,7 @@ import com.morrine.hometrix.navigation.ROUT_BEDROOM1
 import com.morrine.hometrix.navigation.ROUT_BEDROOM2
 import com.morrine.hometrix.navigation.ROUT_BEDROOM3
 import com.morrine.hometrix.navigation.ROUT_BEDSITTER
+import com.morrine.hometrix.navigation.ROUT_BOOKING
 import com.morrine.hometrix.navigation.ROUT_HOME
 import com.morrine.hometrix.navigation.ROUT_SHOP
 import com.morrine.hometrix.navigation.ROUT_SINGLEFAMILY
@@ -78,277 +74,145 @@ import com.morrine.hometrix.ui.theme.newWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashBoard2Screen(navController: NavController){
-    //Scaffold
-
+fun DashBoard2Screen(navController: NavController) {
     var selectedIndex by remember { mutableStateOf(0) }
 
     Scaffold(
-        //TopBar
         topBar = {
             TopAppBar(
-                title = { Text("Tenants Screen") },
+                title = { Text("Tenants Dashboard") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back/nav */ }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Back")
+                    IconButton(onClick = { /* Handle nav */ }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = grey,
+                    containerColor = newOrange,
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )
             )
         },
-
-        //BottomBar
         bottomBar = {
-            NavigationBar (
-                containerColor = grey
-            ){
+            NavigationBar(containerColor = newOrange) {
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                     label = { Text("Home") },
                     selected = selectedIndex == 0,
-                    onClick = { selectedIndex = 0
+                    onClick = {
+                        selectedIndex = 0
                         navController.navigate(ROUT_HOME)
                     }
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorites") },
-                    label = { Text("Favorites") },
+                    icon = { Icon(Icons.Default.MailOutline, contentDescription = "Booking") },
+                    label = { Text("Booking") },
                     selected = selectedIndex == 1,
-                    onClick = { selectedIndex = 1
-                        // navController.navigate(ROUT_HOME)
+                    onClick = {
+                        selectedIndex = 1
+                        navController.navigate(ROUT_BOOKING)
                     }
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
                     label = { Text("Profile") },
                     selected = selectedIndex == 2,
-                    onClick = { selectedIndex = 2
-                        //  navController.navigate(ROUT_HOME)
+                    onClick = {
+                        selectedIndex = 2
+                        // navController.navigate(ROUT_PROFILE)
                     }
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Info, contentDescription = "Profile") },
+                    icon = { Icon(Icons.Default.Info, contentDescription = "Info") },
                     label = { Text("Info") },
-                    selected = selectedIndex == 2,
-                    onClick = { selectedIndex = 2
-                        //  navController.navigate(ROUT_HOME)
+                    selected = selectedIndex == 3,
+                    onClick = {
+                        selectedIndex = 3
+                        // navController.navigate(ROUT_INFO)
                     }
                 )
-
             }
         },
-
-        //FloatingActionButton
         floatingActionButton = {
-            FloatingActionButton (
-                onClick = { /* Add action */ },
+            FloatingActionButton(
+                onClick = { /* Handle add */ },
                 containerColor = Color.LightGray
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         },
-        //contents
         content = { paddingValues ->
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .fillMaxSize()
                     .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+                    .background(newWhite)
+                    .padding(16.dp)
             ) {
-                var mContext = LocalContext.current
-
-
-                //Main Contents of the page
-                Column(
+                Image(
+                    painter = painterResource(R.drawable.img_10),
+                    contentDescription = "Header Image",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White)
-                        .padding(horizontal = 16.dp, vertical = 24.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                ) {
-                    Column (modifier = Modifier.fillMaxSize()) {
-                        var mContext = LocalContext.current
-                        Image(
-                            painter = painterResource(R.drawable.img_10),
-                            contentDescription = "watch",
-                            modifier = Modifier.size(300.dp).fillMaxSize()
-                        )
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
 
-                        Text(text = "Explore unit types :", fontSize = 30.sp)
-                        Spacer(modifier = Modifier.height(30.dp).width(50.dp))
-                        //row
-                        Row ( modifier = Modifier.padding(start = 2.dp, end = 2.dp)){
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_BEDSITTER)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp),
+                Spacer(modifier = Modifier.height(24.dp))
 
+                Text(
+                    text = "Explore Unit Types",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = newOrange
+                )
 
+                Spacer(modifier = Modifier.height(20.dp))
 
-                                ) {
-                                Text(text = "Bedsitter", fontSize = 20.sp)
+                // Button grid
+                val buttonModifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
 
+                val buttonShape = RoundedCornerShape(10.dp)
 
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            Spacer(modifier = Modifier.height(20.dp))
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_SINGLEROOM)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp)
-
-
-                            ) {
-                                Text(text = "Single Room", fontSize = 20.sp)
-
-                            }
-                        }
-                        //end row
-                        Spacer(modifier = Modifier.height(30.dp))
-                        //row
-                        Row ( modifier = Modifier.padding(start = 2.dp, end = 2.dp)){
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_BEDROOM1)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp),
-
-
-
-                                ) {
-                                Text(text = "1 Bedroom", fontSize = 20.sp)
-
-
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-
-
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_BEDROOM2)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp)
-
-
-                            ) {
-                                Text(text = "2 Bedroom", fontSize = 20.sp)
-
-                            }
-                        }
-                        //end row
-                        Spacer(modifier = Modifier.height(30.dp))
-                        //row
-                        Row ( modifier = Modifier.padding(start = 2.dp, end = 2.dp)){
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_BEDROOM3)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp),
-
-
-
-                                ) {
-                                Text(text = "3 Bedroom", fontSize = 20.sp)
-
-
-
-                            }
-
-
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_SINGLEFAMILY)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp)
-
-
-                            ) {
-                                Text(text = "SingleFamily", fontSize = 20.sp)
-
-                            }
-                        }
-                        //end row
-
-
-                        Spacer(modifier = Modifier.height(30.dp))
-                        //row
-                        Row ( modifier = Modifier.fillMaxWidth().padding(start = 2.dp, end = 2.dp)){
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_APARTMENT)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp),
-
-
-
-                                ) {
-                                Text(text = "Apartment", fontSize = 20.sp)
-
-
-
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            Spacer(modifier = Modifier.height(20.dp))
-                            Button(
-                                onClick = {
-                                    navController.navigate(ROUT_SHOP)
-                                },
-                                colors = ButtonDefaults.buttonColors(newBlue),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.height(50.dp).width(180.dp)
-
-
-                            ) {
-                                Text(text = "Shop", fontSize = 20.sp)
-
-                            }
-                        }
-                        //end row
-
-
-
-
-
+                fun unitButton(label: String, route: String) = @androidx.compose.runtime.Composable {
+                    Button(
+                        onClick = { navController.navigate(route) },
+                        colors = ButtonDefaults.buttonColors(newBlue),
+                        shape = buttonShape,
+                        modifier = buttonModifier
+                    ) {
+                        Text(text = label, fontSize = 16.sp)
                     }
+                }
 
+                val unitTypes = listOf(
+                    "Bedsitter" to ROUT_BEDSITTER,
+                    "Single Room" to ROUT_SINGLEROOM,
+                    "1 Bedroom" to ROUT_BEDROOM1,
+                    "2 Bedroom" to ROUT_BEDROOM2,
+                    "3 Bedroom" to ROUT_BEDROOM3,
+                    "SingleFamily" to ROUT_SINGLEFAMILY,
+                    "Apartment" to ROUT_APARTMENT,
+                    "Shop" to ROUT_SHOP,
+                )
 
-
+                unitTypes.chunked(2).forEach { rowItems ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        rowItems.forEach { (label, route) ->
+                            unitButton(label, route).invoke()
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-
-
-
-
-            }
-
-
-
+        }
     )
-
-    //End of scaffold
 }
 
 @Preview(showBackground = true)
@@ -356,3 +220,4 @@ fun DashBoard2Screen(navController: NavController){
 fun DashBoard2ScreenPreview(){
     DashBoard2Screen(rememberNavController())
 }
+

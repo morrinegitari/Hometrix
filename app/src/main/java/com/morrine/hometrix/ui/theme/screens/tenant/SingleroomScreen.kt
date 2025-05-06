@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -48,6 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.morrine.hometrix.R
 import com.morrine.hometrix.navigation.ROUT_HOME
+import com.morrine.hometrix.ui.theme.newBlue
 import com.morrine.hometrix.ui.theme.newOrange
 import com.morrine.hometrix.ui.theme.newWhite
 
@@ -144,56 +148,25 @@ fun SingleroomScreen(navController: NavController){
                         .padding(horizontal = 16.dp, vertical = 24.dp)
                         .clip(RoundedCornerShape(12.dp))
                 ) {
-                    Text(
-                        text = "Personal Tasks",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        modifier = Modifier.padding(bottom = 20.dp)
+                    //SearchBar
+                    var search by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = search,
+                        onValueChange = { search = it },
+                        modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp),
+                        leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "") },
+                        placeholder = { Text(text = "Search... ", fontSize = 30.sp) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = newOrange,
+                            focusedBorderColor = newBlue,
+                        ),
+                        shape = RoundedCornerShape(20.dp)
+
                     )
 
-                    // First Task Card
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        colors = CardDefaults.cardColors(containerColor = newWhite),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Row(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(R.drawable.img_12),
-                                contentDescription = "task",
-                                modifier = Modifier.size(80.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(text = "NDA Review for website project", fontSize = 18.sp)
-                                Text(text = "Today - 10 pm", fontSize = 14.sp, color = Color.Gray)
-                            }
-                        }
-                    }
+//leading=start traillingicon= end
+                    //End of SearchBar
 
-                    // Second Task Card
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = newWhite),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Row(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(R.drawable.img_12),
-                                contentDescription = "task",
-                                modifier = Modifier.size(80.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(text = "Email reply for Green project", fontSize = 18.sp)
-                                Text(text = "Today - 10 pm", fontSize = 14.sp, color = Color.Gray)
-                            }
-                        }
-                    }
                 }
 
 

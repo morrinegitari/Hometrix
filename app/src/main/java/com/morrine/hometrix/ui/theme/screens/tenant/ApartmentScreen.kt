@@ -2,11 +2,13 @@ package com.morrine.hometrix.ui.theme.screens.tenant
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -14,18 +16,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -35,9 +44,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +60,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.morrine.hometrix.R
 import com.morrine.hometrix.navigation.ROUT_HOME
+import com.morrine.hometrix.ui.theme.grey
+import com.morrine.hometrix.ui.theme.newBlue
 import com.morrine.hometrix.ui.theme.newOrange
 import com.morrine.hometrix.ui.theme.newWhite
 
@@ -62,14 +76,14 @@ fun ApartmentScreen(navController: NavController){
         //TopBar
         topBar = {
             TopAppBar(
-                title = { Text("contact") },
+                title = { Text("Apartment screen") },
                 navigationIcon = {
                     IconButton(onClick = { /* Handle back/nav */ }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = newOrange,
+                    containerColor = grey,
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )
@@ -79,7 +93,7 @@ fun ApartmentScreen(navController: NavController){
         //BottomBar
         bottomBar = {
             NavigationBar (
-                containerColor = newOrange
+                containerColor =grey
             ){
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
@@ -90,7 +104,7 @@ fun ApartmentScreen(navController: NavController){
                     }
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorites") },
+                    icon = { Icon(Icons.Default.MailOutline, contentDescription = "messages") },
                     label = { Text("Favorites") },
                     selected = selectedIndex == 1,
                     onClick = { selectedIndex = 1
@@ -98,7 +112,7 @@ fun ApartmentScreen(navController: NavController){
                     }
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+                    icon = { Icon(Icons.Default.Call, contentDescription = "phone") },
                     label = { Text("Profile") },
                     selected = selectedIndex == 2,
                     onClick = { selectedIndex = 2
@@ -106,14 +120,13 @@ fun ApartmentScreen(navController: NavController){
                     }
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Info, contentDescription = "Profile") },
+                    icon = { Icon(Icons.Default.Info, contentDescription = "info") },
                     label = { Text("Info") },
                     selected = selectedIndex == 2,
                     onClick = { selectedIndex = 2
                         //  navController.navigate(ROUT_HOME)
                     }
                 )
-
             }
         },
 
@@ -135,7 +148,6 @@ fun ApartmentScreen(navController: NavController){
             ) {
                 var mContext = LocalContext.current
 
-
                 //Main Contents of the page
                 Column(
                     modifier = Modifier
@@ -144,74 +156,78 @@ fun ApartmentScreen(navController: NavController){
                         .padding(horizontal = 16.dp, vertical = 24.dp)
                         .clip(RoundedCornerShape(12.dp))
                 ) {
-                    Text(
-                        text = "Personal Tasks",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        modifier = Modifier.padding(bottom = 20.dp)
+                    //SearchBar
+                    var search by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = search,
+                        onValueChange = { search = it },
+                        modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp),
+                        leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "") },
+                        placeholder = { Text(text = "Search... ", fontSize = 30.sp) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = newOrange,
+                            focusedBorderColor = newBlue,
+                        ),
+                        shape = RoundedCornerShape(20.dp)
+
                     )
 
-                    // First Task Card
-                    Card(
+//leading=start traillingicon= end
+                    //End of SearchBar
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        colors = CardDefaults.cardColors(containerColor = newWhite),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
+                            .height(250.dp)
                     ) {
-                        Row(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(R.drawable.img_12),
-                                contentDescription = "task",
-                                modifier = Modifier.size(80.dp)
+                        // Background Photo
+                        Image(
+                            painter = painterResource(id = R.drawable.img_10),
+                            contentDescription = "Background Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.matchParentSize()
+                        )
+
+
+                        // Overlay Text and Icon
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(16.dp)
+                                .background(Color.Black.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Location Icon",
+                                tint = Color.White
                             )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(text = "NDA Review for website project", fontSize = 18.sp)
-                                Text(text = "Today - 10 pm", fontSize = 14.sp, color = Color.Gray)
-                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Sample Location",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
                     }
 
-                    // Second Task Card
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = newWhite),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Row(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(R.drawable.img_12),
-                                contentDescription = "task",
-                                modifier = Modifier.size(80.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(text = "Email reply for Green project", fontSize = 18.sp)
-                                Text(text = "Today - 10 pm", fontSize = 14.sp, color = Color.Gray)
-                            }
+
+
                         }
+
+                //end column
+
                     }
-                }
+
+
+
 
 
             }
 
-
-        }
     )
-
     //End of scaffold
-
-
-
-
-
-
 }
-
 @Preview(showBackground = true)
 @Composable
 fun ApartmentScreenPreview(){

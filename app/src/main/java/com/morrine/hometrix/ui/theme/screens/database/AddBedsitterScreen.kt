@@ -1,4 +1,5 @@
-package com.morrine.hometrix.ui.theme.screens.products
+package com.morrine.hometrix.ui.theme.screens.database
+
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -25,11 +26,11 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.morrine.hometrix.R
 import com.morrine.hometrix.navigation.ROUT_ADD_BEDSITTER
-import com.morrine.hometrix.navigation.ROUT_ADD_BEDSITTER
+import com.morrine.hometrix.navigation.ROUT_ADD_PRODUCT
 import com.morrine.hometrix.navigation.ROUT_BEDSITTER
 import com.morrine.hometrix.navigation.ROUT_PRODUCT_LIST
 import com.morrine.hometrix.viewmodel.BedsitterViewModel
-import com.morrine.hometrix.viewmodel.ProductViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +73,7 @@ fun AddBedsitterScreen(navController: NavController, viewModel: BedsitterViewMod
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Bedsitter") },
+                            text = { Text("Product List") },
                             onClick = {
                                 navController.navigate(ROUT_BEDSITTER)
                                 showMenu = false
@@ -105,7 +106,7 @@ fun AddBedsitterScreen(navController: NavController, viewModel: BedsitterViewMod
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Product Name") },
-                    leadingIcon = { Icon(painter = painterResource(R.drawable.name), contentDescription = "Name") },
+                    trailingIcon = { Icon(painter = painterResource(R.drawable.name), contentDescription = "Name") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -116,7 +117,7 @@ fun AddBedsitterScreen(navController: NavController, viewModel: BedsitterViewMod
                     value = price,
                     onValueChange = { price = it },
                     label = { Text("Product Price") },
-                    leadingIcon = { Icon(painter = painterResource(R.drawable.price), contentDescription = "Price") },
+                    trailingIcon = { Icon(painter = painterResource(R.drawable.price), contentDescription = "Price") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -129,7 +130,7 @@ fun AddBedsitterScreen(navController: NavController, viewModel: BedsitterViewMod
                     value = phone,
                     onValueChange = { phone = it },
                     label = { Text("Phone Number") },
-                    leadingIcon = { Icon(painter = painterResource(R.drawable.phone), contentDescription = "Price") },
+                    trailingIcon = { Icon(painter = painterResource(R.drawable.phone), contentDescription = "Price") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -166,15 +167,16 @@ fun AddBedsitterScreen(navController: NavController, viewModel: BedsitterViewMod
                     onClick = {
                         val priceValue = price.toDoubleOrNull()
                         if (priceValue != null) {
-                            imageUri?.toString()?.let { viewModel.addBedsitter(name, priceValue, phone,it) }
-                            navController.popBackStack()
+                            imageUri?.toString()?.let { viewModel.addBedsitter(name, priceValue,location,bathroom,bedroom, phone,it) }
+                            navController.navigate(ROUT_BEDSITTER)
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth() ,
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(Color.LightGray)
                 ) {
-                    Text("Add Bedsitter", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text("Add Product", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -191,13 +193,13 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate(ROUT_BEDSITTER) },
-            icon = { Icon(Icons.Default.Home, contentDescription = "Bedsitter List") },
+            icon = { Icon(Icons.Default.Home, contentDescription = "Product List") },
             label = { Text("Home") }
         )
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate(ROUT_ADD_BEDSITTER) },
-            icon = { Icon(Icons.Default.AddCircle, contentDescription = "Add Bedsitter") },
+            icon = { Icon(Icons.Default.AddCircle, contentDescription = "Add Product") },
             label = { Text("Add") }
         )
 
