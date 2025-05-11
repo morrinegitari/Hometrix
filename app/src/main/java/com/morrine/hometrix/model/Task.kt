@@ -1,14 +1,13 @@
 package com.morrine.hometrix.model
 
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "products")
-data class Product(
+@Entity(tableName = "task")
+data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val name: String,
-    val price: Double,
-    val phone: String,
-    val imagePath: String
+    val title: String,
+    val quantity: String,
+    val date: String,
+    val description: String
 )

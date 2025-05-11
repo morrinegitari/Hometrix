@@ -1,14 +1,12 @@
 package com.morrine.hometrix.model
 
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "products")
-data class Product(
+@Entity(tableName = "messages")
+data class Message(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val name: String,
-    val price: Double,
-    val phone: String,
-    val imagePath: String
+    val sender: String,
+    val text: String,
+    val timestamp: Long = System.currentTimeMillis()
 )

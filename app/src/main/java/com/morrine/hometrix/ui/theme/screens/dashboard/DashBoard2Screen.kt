@@ -1,223 +1,172 @@
-package com.morrine.hometrix.ui.theme.screens.dashboard
-
-import android.content.Intent
-import android.provider.MediaStore
-import androidx.compose.foundation.Image
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.morrine.hometrix.R
-import com.morrine.hometrix.navigation.ROUT_APARTMENT
-import com.morrine.hometrix.navigation.ROUT_BEDROOM1
-import com.morrine.hometrix.navigation.ROUT_BEDROOM2
-import com.morrine.hometrix.navigation.ROUT_BEDROOM3
-import com.morrine.hometrix.navigation.ROUT_BEDSITTER
-import com.morrine.hometrix.navigation.ROUT_BOOKING
-import com.morrine.hometrix.navigation.ROUT_HOME
-import com.morrine.hometrix.navigation.ROUT_SHOP
-import com.morrine.hometrix.navigation.ROUT_SINGLEFAMILY
-import com.morrine.hometrix.navigation.ROUT_SINGLEROOM
-import com.morrine.hometrix.ui.theme.grey
-import com.morrine.hometrix.ui.theme.newBlue
-import com.morrine.hometrix.ui.theme.newOrange
-import com.morrine.hometrix.ui.theme.newWhite
+import com.morrine.hometrix.navigation.ROUT_BROWSEPROPERTIES
+import com.morrine.hometrix.navigation.ROUT_CHAT
+import com.morrine.hometrix.navigation.ROUT_PRODUCT_LIST
+import com.morrine.hometrix.navigation.ROUT_PROPERTYLIST
+import com.morrine.hometrix.navigation.ROUT_TENANTBOOKING
+import com.morrine.hometrix.navigation.ROUT_TENANTINQUIRY
+import com.morrine.hometrix.navigation.ROUT_TENANTSPROFILE
+import com.morrine.hometrix.navigation.ROUT_UPLOAD_TASK
+import com.morrine.hometrix.navigation.ROUT_VIEWBOOKING
+import com.morrine.hometrix.navigation.ROUT_VIEW_TASK
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashBoard2Screen(navController: NavController) {
-    var selectedIndex by remember { mutableStateOf(0) }
+    val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Tenants Dashboard") },
-                navigationIcon = {
-                    IconButton(onClick = { /* Handle nav */ }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+    var title by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
+
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFE3F2FD))
+            .verticalScroll(scrollState)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        Text(
+            text = "Welcome Tenant",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1976D2)
+        )
+
+        StyledActionButton(
+            text = "Browse Properties",
+            icon = Icons.Default.Home,
+            containerColor = Color(0xFFFF9800),
+            onClick = { navController.navigate(ROUT_PRODUCT_LIST) }
+        )
+
+        StyledActionButton(
+            text = "My Bookings",
+            icon = Icons.Default.Add,
+            containerColor = Color(0xFFFF9800),
+            onClick = { navController.navigate(ROUT_VIEW_TASK) }
+        )
+        StyledActionButton(
+            text = "Message landlord",
+            icon = Icons.Default.Add,
+            containerColor = Color(0xFFFF9800),
+            onClick = { navController.navigate(ROUT_CHAT) }
+        )
+
+        StyledActionButton(
+            text = "Send Inquiry",
+            icon = Icons.Default.MailOutline,
+            containerColor = Color(0xFFFF9800),
+            onClick = { navController.navigate(ROUT_UPLOAD_TASK) }
+        )
+
+        StyledActionButton(
+            text = "Profile Settings",
+            icon = Icons.Default.Settings,
+            containerColor = Color(0xFFFF9800),
+            onClick = { navController.navigate(ROUT_TENANTSPROFILE) }
+        )
+
+        Text("Property Details", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.DarkGray)
+
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text("Property Title") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = location,
+            onValueChange = { location = it },
+            label = { Text("Location") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = price,
+            onValueChange = { price = it },
+            label = { Text("Expected Rent (KES)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Button(
+            onClick = {
+                try {
+                    val parsedPrice = price.toDoubleOrNull()
+                    if (title.isBlank() || location.isBlank() || parsedPrice == null || parsedPrice <= 0) {
+                        Toast.makeText(context, "Please enter valid property details.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Simulate submission
+                        Toast.makeText(context, "Property submitted: $title @ $location for KES $parsedPrice", Toast.LENGTH_LONG).show()
+
+                        // Reset fields
+                        title = ""
+                        location = ""
+                        price = ""
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = newOrange,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
-            )
-        },
-        bottomBar = {
-            NavigationBar(containerColor = newOrange) {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") },
-                    selected = selectedIndex == 0,
-                    onClick = {
-                        selectedIndex = 0
-                        navController.navigate(ROUT_HOME)
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.MailOutline, contentDescription = "Booking") },
-                    label = { Text("Booking") },
-                    selected = selectedIndex == 1,
-                    onClick = {
-                        selectedIndex = 1
-                        navController.navigate(ROUT_BOOKING)
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                    label = { Text("Profile") },
-                    selected = selectedIndex == 2,
-                    onClick = {
-                        selectedIndex = 2
-                        // navController.navigate(ROUT_PROFILE)
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Info, contentDescription = "Info") },
-                    label = { Text("Info") },
-                    selected = selectedIndex == 3,
-                    onClick = {
-                        selectedIndex = 3
-                        // navController.navigate(ROUT_INFO)
-                    }
-                )
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* Handle add */ },
-                containerColor = Color.LightGray
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
-            }
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-                    .background(newWhite)
-                    .padding(16.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.img_10),
-                    contentDescription = "Header Image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "Explore Unit Types",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = newOrange
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Button grid
-                val buttonModifier = Modifier
-                    .weight(1f)
-                    .height(50.dp)
-
-                val buttonShape = RoundedCornerShape(10.dp)
-
-                fun unitButton(label: String, route: String) = @androidx.compose.runtime.Composable {
-                    Button(
-                        onClick = { navController.navigate(route) },
-                        colors = ButtonDefaults.buttonColors(newBlue),
-                        shape = buttonShape,
-                        modifier = buttonModifier
-                    ) {
-                        Text(text = label, fontSize = 16.sp)
-                    }
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Submission failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                 }
-
-                val unitTypes = listOf(
-                    "Bedsitter" to ROUT_BEDSITTER,
-                    "Single Room" to ROUT_SINGLEROOM,
-                    "1 Bedroom" to ROUT_BEDROOM1,
-                    "2 Bedroom" to ROUT_BEDROOM2,
-                    "3 Bedroom" to ROUT_BEDROOM3,
-                    "SingleFamily" to ROUT_SINGLEFAMILY,
-                    "Apartment" to ROUT_APARTMENT,
-                    "Shop" to ROUT_SHOP,
-                )
-
-                unitTypes.chunked(2).forEach { rowItems ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        rowItems.forEach { (label, route) ->
-                            unitButton(label, route).invoke()
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2)),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text("Submit Property", color = Color.White)
         }
-    )
+        //
+    }
 }
+
+@Composable
+fun StyledActionButton(
+    text: String,
+    icon: ImageVector,
+    containerColor: Color,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(icon, contentDescription = null, tint = Color.White)
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(text, color = Color.White, fontWeight = FontWeight.Medium)
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
-fun DashBoard2ScreenPreview(){
+fun Dashboard2ScreenPreview() {
     DashBoard2Screen(rememberNavController())
 }
-

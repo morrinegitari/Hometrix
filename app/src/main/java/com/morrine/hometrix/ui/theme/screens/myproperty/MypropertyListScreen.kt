@@ -1,4 +1,13 @@
-package com.glory.nunuachapchap.ui.theme.screens.products
+package com.morrine.hometrix.ui.theme.screens.myproperty
+
+import com.morrine.hometrix.model.Myproperty
+import com.morrine.hometrix.navigation.ROUT_ADDMYPROPERTY
+import com.morrine.hometrix.navigation.ROUT_EDITMYPROPERTY
+import com.morrine.hometrix.navigation.ROUT_MYPROPERTYLIST
+import com.morrine.hometrix.navigation.editMypropertyRoute
+import com.morrine.hometrix.viewmodel.MypropertyViewModel
+
+
 
 
 import android.content.ContentValues
@@ -39,12 +48,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.morrine.hometrix.R
-import com.morrine.hometrix.viewmodel.ProductViewModel
-import com.morrine.hometrix.model.Product
-import com.morrine.hometrix.navigation.ROUT_ADD_PRODUCT
-import com.morrine.hometrix.navigation.ROUT_EDIT_PRODUCT
-import com.morrine.hometrix.navigation.ROUT_PRODUCT_LIST
-import com.morrine.hometrix.navigation.editProductRoute
+
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -53,12 +57,12 @@ import java.io.OutputStream
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductListScreen(navController: NavController, viewModel: ProductViewModel) {
-    val productList by viewModel.allProducts.observeAsState(emptyList())
+fun MypropertyListScreen(navController: NavController, viewModel: MypropertyViewModel) {
+    val mypropertyList by viewModel.allMypropertys.observeAsState(emptyList())
     var showMenu by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
-    val filteredProducts = productList.filter {
+    val filteredMypropertys = mypropertyList.filter {
         it.name.contains(searchQuery, ignoreCase = true)
     }
 
@@ -79,14 +83,14 @@ fun ProductListScreen(navController: NavController, viewModel: ProductViewModel)
                             DropdownMenuItem(
                                 text = { Text("Product List") },
                                 onClick = {
-                                    navController.navigate(ROUT_PRODUCT_LIST)
+                                    navController.navigate(ROUT_MYPROPERTYLIST)
                                     showMenu = false
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("Add Product") },
                                 onClick = {
-                                    navController.navigate(ROUT_ADD_PRODUCT)
+                                    navController.navigate(ROUT_ADDMYPROPERTY)
                                     showMenu = false
                                 }
                             )
@@ -129,8 +133,8 @@ fun ProductListScreen(navController: NavController, viewModel: ProductViewModel)
                 .padding(16.dp)
         ) {
             LazyColumn {
-                items(filteredProducts.size) { index ->
-                    ProductItem(navController, filteredProducts[index], viewModel)
+                items(filteredMypropertys.size) { index ->
+                    MypropertyItem(navController, filteredMypropertys[index], viewModel)
                 }
             }
         }
@@ -139,9 +143,9 @@ fun ProductListScreen(navController: NavController, viewModel: ProductViewModel)
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun ProductItem(navController: NavController, product: Product, viewModel: ProductViewModel) {
+fun MypropertyItem(navController: NavController, myproperty: Myproperty, viewModel: MypropertyViewModel) {
     val painter: Painter = rememberAsyncImagePainter(
-        model = product.imagePath?.let { Uri.parse(it) } ?: Uri.EMPTY
+        model = myproperty.imagePath?.let { Uri.parse(it) } ?: Uri.EMPTY
     )
     val context = LocalContext.current
 
@@ -150,8 +154,8 @@ fun ProductItem(navController: NavController, product: Product, viewModel: Produ
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                if (product.id != 0) {
-                    navController.navigate(ROUT_EDIT_PRODUCT)
+                if (myproperty.id != 0) {
+                    navController.navigate(ROUT_EDITMYPROPERTY)
                 }
             },
         shape = RoundedCornerShape(12.dp),
@@ -188,13 +192,14 @@ fun ProductItem(navController: NavController, product: Product, viewModel: Produ
                     .padding(start = 12.dp, bottom = 60.dp)
             ) {
                 Text(
-                    text = product.name,
+                    text = myproperty.name,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
+
                 Text(
-                    text = "Price: Ksh${product.price}",
+                    text = "Price: Ksh${myproperty.price}",
                     fontSize = 16.sp,
                     color = Color.White
                 )
@@ -214,7 +219,7 @@ fun ProductItem(navController: NavController, product: Product, viewModel: Produ
                     OutlinedButton(
                         onClick = {
                             val smsIntent = Intent(Intent.ACTION_SENDTO)
-                            smsIntent.data = "smsto:${product.phone}".toUri()
+                            smsIntent.data = "smsto:${myproperty.phone}".toUri()
                             smsIntent.putExtra("sms_body", "Hello Seller,...?")
                             context.startActivity(smsIntent)
                         },
@@ -233,7 +238,7 @@ fun ProductItem(navController: NavController, product: Product, viewModel: Produ
                     // Edit Product
                     IconButton(
                         onClick = {
-                            navController.navigate(editProductRoute(product.id))
+                            navController.navigate(editMypropertyRoute(myproperty.id))
                         }
                     ) {
                         Icon(
@@ -245,7 +250,7 @@ fun ProductItem(navController: NavController, product: Product, viewModel: Produ
 
                     // Delete Product
                     IconButton(
-                        onClick = { viewModel.deleteProduct(product) }
+                        onClick = { viewModel.deleteMyproperty(myproperty) }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -256,10 +261,10 @@ fun ProductItem(navController: NavController, product: Product, viewModel: Produ
 
                     // Download PDF
                     IconButton(
-                        onClick = { generateProductPDF(context, product) }
+                        onClick = { generateMypropertyPDF(context, myproperty) }
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.download),
+                            painter = painterResource(R.drawable.price),
                             contentDescription = "",
                             tint = Color.White
                         )
@@ -271,7 +276,7 @@ fun ProductItem(navController: NavController, product: Product, viewModel: Produ
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
-fun generateProductPDF(context: Context, product: Product) {
+fun generateMypropertyPDF(context: Context, myproperty: Myproperty) {
     val pdfDocument = PdfDocument()
     val pageInfo = PdfDocument.PageInfo.Builder(300, 500, 1).create()
     val page = pdfDocument.startPage(pageInfo)
@@ -279,7 +284,7 @@ fun generateProductPDF(context: Context, product: Product) {
     val paint = android.graphics.Paint()
 
     val bitmap: Bitmap? = try {
-        product.imagePath?.let {
+        myproperty.imagePath?.let {
             val uri = Uri.parse(it)
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
@@ -297,18 +302,18 @@ fun generateProductPDF(context: Context, product: Product) {
 
     paint.textSize = 16f
     paint.isFakeBoldText = true
-    canvas.drawText("Product Details", 80f, 200f, paint)
+    canvas.drawText("property Details", 80f, 200f, paint)
 
     paint.textSize = 12f
     paint.isFakeBoldText = false
-    canvas.drawText("Name: ${product.name}", 50f, 230f, paint)
-    canvas.drawText("Price: Ksh${product.price}", 50f, 250f, paint)
-    canvas.drawText("Seller Phone: ${product.phone}", 50f, 270f, paint)
+    canvas.drawText("Name: ${myproperty.name}", 50f, 230f, paint)
+    canvas.drawText("Price: Ksh${myproperty.price}", 50f, 250f, paint)
+    canvas.drawText("Seller Phone: ${myproperty.phone}", 50f, 270f, paint)
 
     pdfDocument.finishPage(page)
 
     // Save PDF using MediaStore (Scoped Storage)
-    val fileName = "${product.name}_Details.pdf"
+    val fileName = "${myproperty.name}_Details.pdf"
     val contentValues = ContentValues().apply {
         put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
         put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
@@ -346,13 +351,13 @@ fun BottomNavigationBar1(navController: NavController) {
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(ROUT_PRODUCT_LIST) },
+            onClick = { navController.navigate(ROUT_MYPROPERTYLIST) },
             icon = { Icon(Icons.Default.Home, contentDescription = "Product List") },
             label = { Text("Home") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(ROUT_ADD_PRODUCT) },
+            onClick = { navController.navigate(ROUT_ADDMYPROPERTY) },
             icon = { Icon(Icons.Default.AddCircle, contentDescription = "Add Product") },
             label = { Text("Add") }
         )

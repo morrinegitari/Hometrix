@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +22,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,8 +34,6 @@ import com.morrine.hometrix.navigation.ROUT_DASHBOARD
 import com.morrine.hometrix.navigation.ROUT_DASHBOARD2
 import com.morrine.hometrix.navigation.ROUT_HOME
 import com.morrine.hometrix.navigation.ROUT_REGISTER
-import com.morrine.hometrix.ui.theme.grey
-import com.morrine.hometrix.ui.theme.newBlue
 import com.morrine.hometrix.ui.theme.newOrange
 import com.morrine.hometrix.viewmodel.AuthViewModel
 
@@ -71,7 +70,7 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .paint(painter = painterResource(R.drawable.img_12), contentScale = ContentScale.FillBounds)
+            .paint(painter = painterResource(R.drawable.img_13), contentScale = ContentScale.FillBounds)
 
     ,
         verticalArrangement = Arrangement.Center,
@@ -85,8 +84,11 @@ fun LoginScreen(
         ) {
             Text(
                 text = "SIGN IN YOUR ACCOUNT",
-                fontSize = 40.sp,
-                fontFamily = FontFamily.SansSerif
+                fontSize = 30.sp,
+                fontFamily = FontFamily.SansSerif,
+                color = newOrange,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic
             )
         }
 
@@ -132,7 +134,7 @@ fun LoginScreen(
                 .height(50.dp)
                 .background(
                     brush = Brush.horizontalGradient(
-                        colors = listOf(Color(0xFF95069A), Color(0xFFFA2815))
+                        colors = listOf(Color(0xFFF48236), Color(0xFFFA2815))
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ),

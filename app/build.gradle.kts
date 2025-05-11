@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.androidTestImplementation
 import org.gradle.kotlin.dsl.implementation
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id ("kotlin-kapt")
+
 }
 
 android {
@@ -62,6 +64,8 @@ dependencies {
 
     implementation("androidx.navigation:navigation-runtime:2.8.9")
     implementation("androidx.navigation:navigation-compose:2.9.0-alpha09")
+    implementation( "androidx.compose.material3:material3:1.2.0")
+
 
 
 
@@ -95,8 +99,7 @@ dependencies {
         implementation ("com.google.accompanist:accompanist-pager-indicators:0.32.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-
-
+    implementation ("androidx.compose.material3:material3:1.2.0-alpha06")
 
 
 

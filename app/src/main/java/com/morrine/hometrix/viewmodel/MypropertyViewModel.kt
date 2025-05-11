@@ -1,49 +1,53 @@
 package com.morrine.hometrix.viewmodel
 
 import android.app.Application
+import android.location.Location
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.morrine.hometrix.data.ProductDatabase
-import com.morrine.hometrix.model.Product
+import com.morrine.hometrix.data.MypropertyDatabase
+import com.morrine.hometrix.model.Myproperty
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import kotlin.io.copyTo
+import kotlin.io.use
 
-class ProductViewModel(app: Application) : AndroidViewModel(app) {
+class MypropertyViewModel(app: Application) : AndroidViewModel(app) {
 
     private val context = app.applicationContext
-    private val productDao = ProductDatabase.getDatabase(app).productDao()
+    private val mypropertyDao = MypropertyDatabase.getDatabase(app).mypropertyDao()
 
-    val allProducts: LiveData<List<Product>> = productDao.getAllProducts()
+    val allMypropertys: LiveData<List<Myproperty>> = mypropertyDao.getAllMypropertys()
 
-    fun addProduct(name: String, price: Double, phone: String, imageUri: String) {
+    fun addMyproperty(name: String, price: Double, phone: String, imageUri: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val savedImagePath = saveImageToInternalStorage(Uri.parse(imageUri))
-            val newProduct = Product(
+            val newMyproperty = Myproperty(
                 name = name,
                 price = price,
                 phone = phone,
                 imagePath = savedImagePath // use saved image path
             )
-            productDao.insertProduct(newProduct)
+            mypropertyDao.insertMyproperty(newMyproperty)
         }
     }
 
-    fun updateProduct(updatedProduct: Product) {
+    fun updateMyproperty(updatedMyproperty: Myproperty) {
         viewModelScope.launch(Dispatchers.IO) {
-            productDao.updateProduct(updatedProduct)
+            mypropertyDao.updateMyproperty(updatedMyproperty)
         }
     }
 
-    fun deleteProduct(product: Product) {
+    fun deleteMyproperty(myproperty: Myproperty) {
         viewModelScope.launch(Dispatchers.IO) {
             // Delete image from storage
-            deleteImageFromInternalStorage(product.imagePath)
-            productDao.deleteProduct(product)
+            deleteImageFromInternalStorage(myproperty.imagePath)
+            mypropertyDao.deleteMyproperty(myproperty)
         }
     }
 

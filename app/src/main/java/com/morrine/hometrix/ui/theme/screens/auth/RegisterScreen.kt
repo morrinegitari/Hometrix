@@ -26,6 +26,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +39,7 @@ import com.morrine.hometrix.model.User
 import com.morrine.hometrix.navigation.ROUT_LOGIN
 import com.morrine.hometrix.navigation.ROUT_REGISTER
 import com.morrine.hometrix.ui.theme.grey
+import com.morrine.hometrix.ui.theme.newOrange
 import com.morrine.hometrix.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +66,7 @@ fun RegisterScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .paint(painter = painterResource(R.drawable.img_12), contentScale = ContentScale.FillBounds)
+            .paint(painter = painterResource(R.drawable.img_13), contentScale = ContentScale.FillBounds)
 
 
     ,
@@ -77,7 +80,10 @@ fun RegisterScreen(
             Text(
                 "Create An Account",
                 fontSize = 40.sp,
-                fontFamily = FontFamily.Cursive
+                fontFamily = FontFamily.Cursive,
+                color = newOrange,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic
             )
         }
 

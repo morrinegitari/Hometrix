@@ -1,4 +1,10 @@
-package com.morrine.hometrix.ui.theme.screens.products
+package com.morrine.iceberry.ui.theme.screens.myproperty
+
+import com.morrine.hometrix.navigation.ROUT_ADDMYPROPERTY
+import com.morrine.hometrix.navigation.ROUT_MYPROPERTYLIST
+import com.morrine.hometrix.viewmodel.MypropertyViewModel
+
+
 
 import android.net.Uri
 import android.util.Log
@@ -8,7 +14,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -25,13 +33,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.morrine.hometrix.R
-import com.morrine.hometrix.navigation.ROUT_ADD_PRODUCT
-import com.morrine.hometrix.navigation.ROUT_PRODUCT_LIST
-import com.morrine.hometrix.viewmodel.ProductViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProductScreen(navController: NavController, viewModel: ProductViewModel) {
+fun AddMypropertyScreen(navController: NavController, viewModel: MypropertyViewModel) {
     var name by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -69,14 +74,14 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel) 
                         DropdownMenuItem(
                             text = { Text("Product List") },
                             onClick = {
-                                navController.navigate(ROUT_PRODUCT_LIST)
+                                navController.navigate(ROUT_MYPROPERTYLIST)
                                 showMenu = false
                             }
                         )
                         DropdownMenuItem(
                             text = { Text("Add Product") },
                             onClick = {
-                                navController.navigate(ROUT_ADD_PRODUCT)
+                                navController.navigate(ROUT_ADDMYPROPERTY)
                                 showMenu = false
                             }
                         )
@@ -92,7 +97,8 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel) 
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Product Name
@@ -100,18 +106,19 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel) 
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Product Name") },
-                    leadingIcon = { Icon(painter = painterResource(R.drawable.name), contentDescription = "Name") },
+                    leadingIcon = { Icon(painter = painterResource(R.drawable.phone), contentDescription = "Name") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
+
 
                 // Product Price
                 OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
                     label = { Text("Product Price") },
-                    leadingIcon = { Icon(painter = painterResource(R.drawable.money), contentDescription = "Price") },
+                    leadingIcon = { Icon(painter = painterResource(R.drawable.price), contentDescription = "Price") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -156,12 +163,13 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel) 
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+
                 // Add Product Button
                 Button(
                     onClick = {
                         val priceValue = price.toDoubleOrNull()
                         if (priceValue != null) {
-                            imageUri?.toString()?.let { viewModel.addProduct(name, priceValue, phone,it) }
+                            imageUri?.toString()?.let { viewModel.addMyproperty(name,  priceValue, phone,it) }
                             navController.popBackStack()
                         }
                     },
@@ -171,6 +179,7 @@ fun AddProductScreen(navController: NavController, viewModel: ProductViewModel) 
                 ) {
                     Text("Add Product", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
+
             }
         }
     )
@@ -185,13 +194,13 @@ fun BottomNavigationBar(navController: NavController) {
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(ROUT_PRODUCT_LIST) },
+            onClick = { navController.navigate(ROUT_MYPROPERTYLIST) },
             icon = { Icon(Icons.Default.Home, contentDescription = "Product List") },
             label = { Text("Home") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(ROUT_ADD_PRODUCT) },
+            onClick = { navController.navigate(ROUT_ADDMYPROPERTY) },
             icon = { Icon(Icons.Default.AddCircle, contentDescription = "Add Product") },
             label = { Text("Add") }
         )
@@ -199,7 +208,7 @@ fun BottomNavigationBar(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(ROUT_ADD_PRODUCT) },
+            onClick = { navController.navigate(ROUT_ADDMYPROPERTY) },
             icon = { Icon(painter = painterResource(R.drawable.profile), contentDescription = "") },
             label = { Text("Profile") }
         )
